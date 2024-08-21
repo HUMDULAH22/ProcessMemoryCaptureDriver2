@@ -1,0 +1,62 @@
+;
+; ProcessMemoryCaptureDriver2.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = ProcessMemoryCaptureDriver2.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ProcessMemoryCaptureDriver2.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%ProcessMemoryCaptureDriver2.DeviceDesc% = ProcessMemoryCaptureDriver2_Device, Root\ProcessMemoryCaptureDriver2 ; TODO: edit hw-id
+
+[ProcessMemoryCaptureDriver2_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+ProcessMemoryCaptureDriver2.sys
+
+;-------------- Service installation
+[ProcessMemoryCaptureDriver2_Device.NT.Services]
+AddService = ProcessMemoryCaptureDriver2,%SPSVCINST_ASSOCSERVICE%, ProcessMemoryCaptureDriver2_Service_Inst
+
+; -------------- ProcessMemoryCaptureDriver2 driver install sections
+[ProcessMemoryCaptureDriver2_Service_Inst]
+DisplayName    = %ProcessMemoryCaptureDriver2.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\ProcessMemoryCaptureDriver2.sys
+
+[ProcessMemoryCaptureDriver2_Device.NT.Wdf]
+KmdfService = ProcessMemoryCaptureDriver2, ProcessMemoryCaptureDriver2_wdfsect
+
+[ProcessMemoryCaptureDriver2_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "ProcessMemoryCaptureDriver2 Installation Disk"
+ProcessMemoryCaptureDriver2.DeviceDesc = "ProcessMemoryCaptureDriver2 Device"
+ProcessMemoryCaptureDriver2.SVCDESC = "ProcessMemoryCaptureDriver2 Service"
